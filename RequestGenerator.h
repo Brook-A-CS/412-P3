@@ -2,6 +2,7 @@
 #include "Request.h"
 #include <random>
 #include <string>
+#include <vector>
 
 class RequestGenerator {
     private:
@@ -10,5 +11,7 @@ class RequestGenerator {
 
     public:
         RequestGenerator();
-        Request generateRequest();
+        Request generateRequest(bool generate_log = true);
+        std::vector<Request> RequestGenerator::generateRequests(int count);
+
 };

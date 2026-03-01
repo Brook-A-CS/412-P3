@@ -20,7 +20,7 @@ std::string RequestGenerator::generateRandomIP() {
     return ip;
 }
 
-Request RequestGenerator::generateRequest(bool generate_log = true) {
+Request RequestGenerator::generateRequest(bool generate_log) {
     std::uniform_int_distribution<int> timeDist(5, 500); 
     std::uniform_int_distribution<int> jobDist(0, 1);
 
@@ -43,17 +43,13 @@ Request RequestGenerator::generateRequest(bool generate_log = true) {
 }
 
 std::vector<Request> RequestGenerator::generateRequests(int count) {
-    std::vector<Request> rqs(count);
+    std::vector<Request> rqs;
 
     std::cout << Color::CYAN << "[INFO] " << Color::RESET 
               << "Generating a batch of " << count << " requests:\n";
 
     for (int i = 0; i < count; i++) {
-        rqs[i] = generateRequest();
-        
-        if (i < count - 1) {
-            std::cout << "  ------------------------\n"; 
-        }
+        rqs.push_back(generateRequest());
     }
 
     return rqs;

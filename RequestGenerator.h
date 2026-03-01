@@ -12,6 +12,6 @@ class RequestGenerator {
     public:
         RequestGenerator();
         Request generateRequest(bool generate_log = true);
-        std::vector<Request> RequestGenerator::generateRequests(int count);
+        std::vector<Request> generateRequests(int count);
 
 };

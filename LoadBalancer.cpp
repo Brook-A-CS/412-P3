@@ -38,7 +38,7 @@ void LoadBalancer::balanceLoad() {
     if(requestQueue.size() < 50 * servers.size()) {
         servers.pop_back();
 
-        std::cout << Color::GREEN << "[INFO] " << Color::RESET <<
+        std::cout << Color::CYAN << "[INFO] " << Color::RESET <<
         "Num servers increased by 1 for a total of " << server_size() << std::endl;
     };
 

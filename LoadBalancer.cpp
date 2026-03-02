@@ -11,6 +11,11 @@ LoadBalancer::LoadBalancer(int numServers) {
 }
 
 void LoadBalancer::addRequest(Request r) {
+    if (firewall.isBlocked(r.getIPIn())) {
+        std::cout << Color::RED << "[FIREWALL] " << Color::RESET
+                  << "Dropped request from " << r.getIPIn() << std::endl;
+        return;
+    }
     requestQueue.push(r);
 }
 
@@ -39,8 +44,7 @@ void LoadBalancer::balanceLoad() {
         servers.pop_back();
 
         std::cout << Color::CYAN << "[INFO] " << Color::RESET <<
-        "Num servers increased by 1 for a total of " << server_size() << std::endl;
-    };
-
-    
+        "Num servers decreased by 1 for a total of " << server_size() << std::endl;
+    };   
 }
+

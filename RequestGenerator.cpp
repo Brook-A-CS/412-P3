@@ -20,13 +20,14 @@ std::string RequestGenerator::generateRandomIP() {
 }
 
 Request RequestGenerator::generateRequest(bool generate_log) {
-    std::uniform_int_distribution<int> timeDist(5, 500);
+    std::uniform_int_distribution<int> streamTimeDist(3, 25);
+    std::uniform_int_distribution<int> processTimeDist(25, 120);
     std::uniform_int_distribution<int> jobDist(0, 1);
 
     std::string ipIn  = generateRandomIP();
     std::string ipOut = generateRandomIP();
-    int time          = timeDist(rng);
     char jobType      = (jobDist(rng) == 0) ? 'P' : 'S';
+    int time          = (jobType == 'S') ? streamTimeDist(rng) : processTimeDist(rng);
 
     if (generate_log) {
         Logger::get().detail("Generated: " + ipIn + " > " + ipOut

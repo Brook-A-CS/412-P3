@@ -42,6 +42,10 @@ int main() {
     SW.blockIP(blockedRange);
     RequestGenerator RG;
 
+    int initialFill = (numServersS + numServersP) * 100;
+    for (Request r : RG.generateRequests(initialFill))
+        SW.addRequest(r);
+
     std::mt19937 gen(std::random_device{}());
     std::uniform_real_distribution<float> chanceDist(0.0f, 1.0f);
 

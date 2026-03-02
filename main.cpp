@@ -32,6 +32,16 @@ int main() {
         else if (key == "BLOCKED_RANGE")  blockedRange = val;
     }
 
+    std::cout << "Total simulation time [" << totalTime << "]: ";
+    std::string input;
+    if (std::getline(std::cin, input) && !input.empty()) totalTime = std::stoi(input);
+
+    std::cout << "Number of stream servers [" << numServersS << "]: ";
+    if (std::getline(std::cin, input) && !input.empty()) numServersS = std::stoi(input);
+
+    std::cout << "Number of process servers [" << numServersP << "]: ";
+    if (std::getline(std::cin, input) && !input.empty()) numServersP = std::stoi(input);
+
     Logger::get().open(logFile);
     Logger::get().info("Config: total_time=" + std::to_string(totalTime)
         + " servers_S=" + std::to_string(numServersS)

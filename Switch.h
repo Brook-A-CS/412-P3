@@ -32,4 +32,10 @@ class Switch {
 
         /// @brief Prints a summary for both LoadBalancers.
         void printSummary() const;
+
+        /// @brief Returns the current number of queued requests in the stream LoadBalancer.
+        int streamQueueSize() const { return streamLB.queue_size(); }
+
+        /// @brief Returns the current number of queued requests in the process LoadBalancer.
+        int processQueueSize() const { return processLB.queue_size(); }
 };

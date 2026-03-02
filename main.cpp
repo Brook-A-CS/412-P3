@@ -36,7 +36,8 @@ int main() {
     Logger::get().info("Config: total_time=" + std::to_string(totalTime)
         + " servers_S=" + std::to_string(numServersS)
         + " servers_P=" + std::to_string(numServersP)
-        + " req_chance=" + std::to_string(reqChance));
+        + " req_chance=" + std::to_string(reqChance)
+        + " task_time_S=3-25 task_time_P=25-120");
 
     Switch SW(numServersS, numServersP);
     SW.blockIP(blockedRange);
@@ -45,6 +46,8 @@ int main() {
     int initialFill = (numServersS + numServersP) * 100;
     for (Request r : RG.generateRequests(initialFill))
         SW.addRequest(r);
+    Logger::get().info("Starting queue size | stream=" + std::to_string(SW.streamQueueSize())
+        + " process=" + std::to_string(SW.processQueueSize()));
 
     std::mt19937 gen(std::random_device{}());
     std::uniform_real_distribution<float> chanceDist(0.0f, 1.0f);

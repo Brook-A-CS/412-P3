@@ -3,7 +3,7 @@ CXXFLAGS = -std=c++17 -Wall -Wextra -g
 
 TARGET = loadbalancer
 
-SRCS = main.cpp LoadBalancer.cpp RequestGenerator.cpp WebServer.cpp
+SRCS = main.cpp Switch.cpp LoadBalancer.cpp RequestGenerator.cpp WebServer.cpp Firewall.cpp Logger.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 

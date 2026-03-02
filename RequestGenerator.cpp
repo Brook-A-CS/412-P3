@@ -9,7 +9,11 @@ RequestGenerator::RequestGenerator() {
 
 std::string RequestGenerator::generateRandomIP() {
     std::uniform_int_distribution<int> octetDist(0, 255);
-    return std::to_string(octetDist(rng)) + "." +
+    std::uniform_int_distribution<int> chanceDist(0, 99);
+
+    int firstOctet = (chanceDist(rng) < 10) ? 10 : octetDist(rng);
+
+    return std::to_string(firstOctet) + "." +
            std::to_string(octetDist(rng)) + "." +
            std::to_string(octetDist(rng)) + "." +
            std::to_string(octetDist(rng));
@@ -25,7 +29,7 @@ Request RequestGenerator::generateRequest(bool generate_log) {
     char jobType      = (jobDist(rng) == 0) ? 'P' : 'S';
 
     if (generate_log) {
-        Logger::get().detail("Generated: " + ipIn + " -> " + ipOut
+        Logger::get().detail("Generated: " + ipIn + " > " + ipOut
             + " | time=" + std::to_string(time) + " job=" + jobType);
     }
 

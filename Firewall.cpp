@@ -1,49 +1,21 @@
-#include <sstream>
-#include <stdexcept>
-#include <iostream>
 #include "Firewall.h"
 #include "Logger.h"
-#include "Color.h"
 
-uint32_t Firewall::parseIP(const std::string& ip) {
-    uint32_t result = 0;
-    std::stringstream ss(ip);
-    std::string octet;
-    int count = 0;
-    while (std::getline(ss, octet, '.')) {
-        result = (result << 8) | std::stoi(octet);
-        count++;
-    }
-    if (count != 4) throw std::invalid_argument("Invalid IP address: " + ip);
-    return result;
-}
-
-std::pair<uint32_t, uint32_t> Firewall::parseCIDR(const std::string& cidr) {
-    size_t slash = cidr.find('/');
-    if (slash == std::string::npos) throw std::invalid_argument("Invalid CIDR: " + cidr);
-    uint32_t ip = parseIP(cidr.substr(0, slash));
-    int prefix = std::stoi(cidr.substr(slash + 1));
-    uint32_t mask = prefix == 0 ? 0u : (~0u << (32 - prefix));
-    return {ip & mask, mask};
-}
-
-void Firewall::blockRange(const std::string& cidr) {
-    auto [network, mask] = parseCIDR(cidr);
-    blockedRanges.push_back({network, mask, cidr});
-    Logger::get().alert("Firewall rule added: " + cidr);
+void Firewall::blockRange(const std::string& prefix) {
+    blockedPrefixes.push_back(prefix);
+    Logger::get().alert("Firewall rule added: " + prefix);
 }
 
 bool Firewall::isBlocked(const std::string& ip) const {
-    uint32_t addr = parseIP(ip);
-    for (const auto& range : blockedRanges) {
-        if ((addr & range.mask) == range.network) return true;
+    for (const auto& prefix : blockedPrefixes) {
+        if (ip.substr(0, prefix.size()) == prefix) return true;
     }
     return false;
 }
 
 void Firewall::printRules() const {
-    Logger::get().alert("Active blocked ranges (" + std::to_string(blockedRanges.size()) + "):");
-    for (const auto& r : blockedRanges) {
-        Logger::get().alert("  - " + r.cidr);
+    Logger::get().alert("Active blocked prefixes (" + std::to_string(blockedPrefixes.size()) + "):");
+    for (const auto& p : blockedPrefixes) {
+        Logger::get().alert("  - " + p);
     }
 }

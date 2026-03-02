@@ -7,10 +7,10 @@
 const int WAIT_BETWEEN_REBALANCING = 30;
 const int STATUS_INTERVAL = 1000;
 
-LoadBalancer::LoadBalancer(int numServers) {
+LoadBalancer::LoadBalancer(int numServers, const std::string& n) : name(n) {
     servers.resize(numServers);
     peakServerCount = numServers;
-    Logger::get().info("LoadBalancer started with " + std::to_string(numServers) + " servers");
+    Logger::get().info("[" + name + "] started with " + std::to_string(numServers) + " servers");
 }
 
 void LoadBalancer::addRequest(Request r) {
@@ -44,7 +44,7 @@ void LoadBalancer::increment() {
     if (currentTime % WAIT_BETWEEN_REBALANCING == 0) balanceLoad();
 
     if (currentTime % STATUS_INTERVAL == 0 && currentTime > 0) {
-        Logger::get().info("Status | queue=" + std::to_string(queue_size())
+        Logger::get().info("[" + name + "] Status | queue=" + std::to_string(queue_size())
             + " servers=" + std::to_string(server_size())
             + " processed=" + std::to_string(totalProcessed)
             + " blocked=" + std::to_string(totalBlocked));
@@ -61,13 +61,13 @@ void LoadBalancer::balanceLoad() {
         servers.push_back(WebServer());
         serversAdded++;
         if ((int)servers.size() > peakServerCount) peakServerCount = servers.size();
-        Logger::get().info("Server added   | queue=" + std::to_string(qs)
+        Logger::get().info("[" + name + "] Server added   | queue=" + std::to_string(qs)
             + " | total=" + std::to_string(server_size()));
 
     } else if (qs < 50 * ss && ss > 1) {
         servers.pop_back();
         serversRemoved++;
-        Logger::get().warn("Server removed | queue=" + std::to_string(qs)
+        Logger::get().warn("[" + name + "] Server removed | queue=" + std::to_string(qs)
             + " | total=" + std::to_string(server_size()));
             
     } else {
@@ -77,7 +77,7 @@ void LoadBalancer::balanceLoad() {
 }
 
 void LoadBalancer::printSummary() const {
-    Logger::get().summary("=== Load Balancer Summary ===");
+    Logger::get().summary("=== " + name + " Summary ===");
     Logger::get().summary("Total clock cycles  : " + std::to_string(currentTime));
     Logger::get().summary("Requests processed  : " + std::to_string(totalProcessed));
     Logger::get().summary("Requests blocked    : " + std::to_string(totalBlocked));

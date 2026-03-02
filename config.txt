@@ -1,18 +1,8 @@
 # Load Balancer Configuration
 
-# Total number of clock cycles to run
 TOTAL_TIME=10001
-
-# Number of web servers to start with
-NUM_SERVERS=11
-
-# Requests per tick. Integer part = guaranteed requests, decimal = chance of one more.
-# Examples: 0.75 = 75% chance of 1 request. 2.5 = always 2 requests + 50% chance of a 3rd.
+NUM_SERVERS_S=6
+NUM_SERVERS_P=5
 REQUEST_CHANCE=0.15
-
-# Log output file
 LOG_FILE=loadbalancer.log
-
-# IP prefix to block. Any request whose source IP starts with this will be dropped.
-# Example: "10." blocks all 10.x.x.x addresses
 BLOCKED_RANGE=10.

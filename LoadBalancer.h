@@ -15,6 +15,7 @@ class LoadBalancer {
         std::queue<Request> requestQueue;
         std::vector<WebServer> servers;
         Firewall firewall;
+        std::string name;
         int currentTime = 0;
 
         int totalProcessed  = 0;
@@ -31,7 +32,8 @@ class LoadBalancer {
     public:
         /// @brief Constructs a LoadBalancer with the given number of servers.
         /// @param numServers Initial number of WebServers to create
-        LoadBalancer(int numServers);
+        /// @param name Label used in logs to identify this instance (e.g. "Stream", "Process")
+        LoadBalancer(int numServers, const std::string& name = "LB");
 
         /// @brief Adds a request to the queue after firewall inspection.
         ///        Requests matching a blocked prefix are silently dropped.

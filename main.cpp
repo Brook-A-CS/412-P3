@@ -1,17 +1,18 @@
 #include <iostream>
 #include <fstream>
 #include <random>
-#include "LoadBalancer.h"
+#include "Switch.h"
 #include "RequestGenerator.h"
 #include "Logger.h"
 
 int main() {
 
     // Config defaults
-    int totalTime = 10000;
-    int numServers = 10;
-    float reqChance = 0.10f;
-    std::string logFile = "loadbalancer.log";
+    int totalTime    = 10000;
+    int numServersS  = 5;
+    int numServersP  = 5;
+    float reqChance  = 0.10f;
+    std::string logFile      = "loadbalancer.log";
     std::string blockedRange = "10.";
 
     // Load config.txt
@@ -23,20 +24,22 @@ int main() {
         if (eq == std::string::npos) continue;
         std::string key = line.substr(0, eq);
         std::string val = line.substr(eq + 1);
-        if (key == "TOTAL_TIME") totalTime = std::stoi(val);
-        else if (key == "NUM_SERVERS") numServers = std::stoi(val);
-        else if (key == "REQUEST_CHANCE") reqChance = std::stof(val);
-        else if (key == "LOG_FILE") logFile = val;
-        else if (key == "BLOCKED_RANGE") blockedRange = val;
+        if      (key == "TOTAL_TIME")     totalTime    = std::stoi(val);
+        else if (key == "NUM_SERVERS_S")  numServersS  = std::stoi(val);
+        else if (key == "NUM_SERVERS_P")  numServersP  = std::stoi(val);
+        else if (key == "REQUEST_CHANCE") reqChance    = std::stof(val);
+        else if (key == "LOG_FILE")       logFile      = val;
+        else if (key == "BLOCKED_RANGE")  blockedRange = val;
     }
 
     Logger::get().open(logFile);
     Logger::get().info("Config: total_time=" + std::to_string(totalTime)
-        + " servers=" + std::to_string(numServers)
+        + " servers_S=" + std::to_string(numServersS)
+        + " servers_P=" + std::to_string(numServersP)
         + " req_chance=" + std::to_string(reqChance));
 
-    LoadBalancer LB(numServers);
-    LB.blockIP(blockedRange);
+    Switch SW(numServersS, numServersP);
+    SW.blockIP(blockedRange);
     RequestGenerator RG;
 
     std::mt19937 gen(std::random_device{}());
@@ -46,11 +49,11 @@ int main() {
         int numReqs = (int)reqChance;
         if (chanceDist(gen) < (reqChance - numReqs)) numReqs++;
         for (int i = 0; i < numReqs; i++)
-            LB.addRequest(RG.generateRequest());
-        LB.increment();
+            SW.addRequest(RG.generateRequest());
+        SW.increment();
     }
 
-    LB.printSummary();
+    SW.printSummary();
 
     return 0;
 }

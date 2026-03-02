@@ -1,8 +1,6 @@
-#include <iostream>
 #include <vector>
-
 #include "RequestGenerator.h"
-#include "Color.h"
+#include "Logger.h"
 
 RequestGenerator::RequestGenerator() {
     std::random_device rd;
@@ -11,32 +9,24 @@ RequestGenerator::RequestGenerator() {
 
 std::string RequestGenerator::generateRandomIP() {
     std::uniform_int_distribution<int> octetDist(0, 255);
-    
-    std::string ip = std::to_string(octetDist(rng)) + "." +
-                     std::to_string(octetDist(rng)) + "." +
-                     std::to_string(octetDist(rng)) + "." +
-                     std::to_string(octetDist(rng));
-                     
-    return ip;
+    return std::to_string(octetDist(rng)) + "." +
+           std::to_string(octetDist(rng)) + "." +
+           std::to_string(octetDist(rng)) + "." +
+           std::to_string(octetDist(rng));
 }
 
 Request RequestGenerator::generateRequest(bool generate_log) {
-    std::uniform_int_distribution<int> timeDist(5, 500); 
+    std::uniform_int_distribution<int> timeDist(5, 500);
     std::uniform_int_distribution<int> jobDist(0, 1);
 
-    std::string ipIn = generateRandomIP();
+    std::string ipIn  = generateRandomIP();
     std::string ipOut = generateRandomIP();
-    int time = timeDist(rng);
-    char jobType = (jobDist(rng) == 0) ? 'P' : 'S';
+    int time          = timeDist(rng);
+    char jobType      = (jobDist(rng) == 0) ? 'P' : 'S';
 
     if (generate_log) {
-        std::cout << Color::CYAN << "[INFO] " << Color::RESET 
-              << "Generated Request - "
-              << "IP In: " << ipIn 
-              << ", IP Out: " << ipOut
-              << ", Time: " << time 
-              << ", Job Type: " << jobType 
-              << std::endl;
+        Logger::get().detail("Generated: " + ipIn + " -> " + ipOut
+            + " | time=" + std::to_string(time) + " job=" + jobType);
     }
 
     return Request(ipIn, ipOut, time, jobType);
@@ -44,13 +34,7 @@ Request RequestGenerator::generateRequest(bool generate_log) {
 
 std::vector<Request> RequestGenerator::generateRequests(int count) {
     std::vector<Request> rqs;
-
-    std::cout << Color::CYAN << "[INFO] " << Color::RESET 
-              << "Generating a batch of " << count << " requests:\n";
-
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++)
         rqs.push_back(generateRequest());
-    }
-
     return rqs;
 }

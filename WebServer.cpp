@@ -1,12 +1,10 @@
-#include <iostream>
 #include "WebServer.h"
-#include "Color.h"
+#include "Logger.h"
 
 
 void WebServer::processRequest(Request&& R) {
     if (timeLeft != 0) {
-        std::cout << Color::YELLOW << "[WARNING]: " << Color::RESET 
-                << "Server replacing unfinished Request" << std::endl; 
+        Logger::get().warn("Server replacing unfinished request");
     }
 
     Req = R;

@@ -1,7 +1,8 @@
-#include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <iostream>
 #include "Firewall.h"
+#include "Logger.h"
 #include "Color.h"
 
 uint32_t Firewall::parseIP(const std::string& ip) {
@@ -29,8 +30,7 @@ std::pair<uint32_t, uint32_t> Firewall::parseCIDR(const std::string& cidr) {
 void Firewall::blockRange(const std::string& cidr) {
     auto [network, mask] = parseCIDR(cidr);
     blockedRanges.push_back({network, mask, cidr});
-    std::cout << Color::RED << "[FIREWALL] " << Color::RESET
-              << "Blocked range added: " << cidr << std::endl;
+    Logger::get().alert("Firewall rule added: " + cidr);
 }
 
 bool Firewall::isBlocked(const std::string& ip) const {
@@ -42,9 +42,8 @@ bool Firewall::isBlocked(const std::string& ip) const {
 }
 
 void Firewall::printRules() const {
-    std::cout << Color::RED << "[FIREWALL] " << Color::RESET
-              << "Active blocked ranges (" << blockedRanges.size() << "):\n";
+    Logger::get().alert("Active blocked ranges (" + std::to_string(blockedRanges.size()) + "):");
     for (const auto& r : blockedRanges) {
-        std::cout << "  - " << r.cidr << "\n";
+        Logger::get().alert("  - " + r.cidr);
     }
 }

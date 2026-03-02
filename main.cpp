@@ -5,6 +5,9 @@
 #include "RequestGenerator.h"
 #include "Logger.h"
 
+
+// Panda Software Solutions Inc Load Balancer
+// All rights reserved
 int main() {
 
     // Config defaults
